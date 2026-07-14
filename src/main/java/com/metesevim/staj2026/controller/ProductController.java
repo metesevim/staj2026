@@ -1,7 +1,9 @@
 package com.metesevim.staj2026.controller;
 
-import com.metesevim.staj2026.entity.Product;
+import com.metesevim.staj2026.dto.ProductRequest;
+import com.metesevim.staj2026.dto.ProductResponse;
 import com.metesevim.staj2026.service.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,26 +20,28 @@ public class ProductController {
     }
 
     @PostMapping
-    public Product createProduct(@RequestBody Product product) {
-        return productService.createProduct(product);
+    public ProductResponse createProduct(
+            @Valid @RequestBody ProductRequest request
+    ) {
+        return productService.createProduct(request);
     }
 
     @GetMapping
-    public List<Product> getAllProducts() {
+    public List<ProductResponse> getAllProducts() {
         return productService.getAllProducts();
     }
 
     @GetMapping("/{id}")
-    public Product getProductById(@PathVariable Long id) {
+    public ProductResponse getProductById(@PathVariable Long id) {
         return productService.getProductById(id);
     }
 
     @PutMapping("/{id}")
-    public Product updateProduct(
+    public ProductResponse updateProduct(
             @PathVariable Long id,
-            @RequestBody Product product
+            @Valid @RequestBody ProductRequest request
     ) {
-        return productService.updateProduct(id, product);
+        return productService.updateProduct(id, request);
     }
 
     @DeleteMapping("/{id}")

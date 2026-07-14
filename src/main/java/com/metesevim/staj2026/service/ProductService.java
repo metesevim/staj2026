@@ -1,11 +1,15 @@
 package com.metesevim.staj2026.service;
 
+import com.metesevim.staj2026.dto.ProductRequest;
+import com.metesevim.staj2026.dto.ProductResponse;
 import com.metesevim.staj2026.entity.Product;
 import com.metesevim.staj2026.exception.ProductNotFoundException;
 import com.metesevim.staj2026.repository.ProductRepository;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -18,64 +22,75 @@ public class ProductService {
     }
 
     //CREATE PRODUCT
-    public Product createProduct(Product product) {
-        validateProduct(product);
+    public ProductResponse createProduct(ProductRequest request) {
+        Product product = new Product();
 
-        return productRepository.save(product);
+        product.setName(request.name());
+        product.setDescription(request.description());
+        product.setPrice(request.price());
+        product.setStock(request.stock());
+        product.setActive(
+                request.active() != null ? request.active() : true
+        );
+
+        Product savedProduct = productRepository.save(product);
+
+        return toResponse(savedProduct);
     }
 
     //GET ALL PRODUCTS
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public List<ProductResponse> getAllProducts() {
+        return productRepository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 
-    //GET A PRODUCT BY ID
-    public Product getProductById(Long id) {
-        return productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(id));
-    }
+    //GET PRODUCT BY ID
+    public ProductResponse getProductById(Long id) {
+        Product product = findProductById(id);
 
-    //VALIDATION
-    private void validateProduct(Product product) {
-        if (product.getName() == null || product.getName().isBlank()) {
-            throw new IllegalArgumentException(
-                    "Product name cannot be empty"
-            );
-        }
-
-        if (product.getPrice() == null ||
-                product.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException(
-                    "Product price must be greater than zero"
-            );
-        }
-
-        if (product.getStock() == null || product.getStock() < 0) {
-            throw new IllegalArgumentException(
-                    "Product stock cannot be negative"
-            );
-        }
+        return toResponse(product);
     }
 
     //UPDATE PRODUCT
-    public Product updateProduct(Long id, Product updatedProduct) {
+    public ProductResponse updateProduct(
+            @PathVariable Long id,
+            @Valid @RequestBody ProductRequest request
+    ) {
+        Product existingProduct = findProductById(id);
 
-        Product existingProduct = getProductById(id);
+        existingProduct.setName(request.name());
+        existingProduct.setDescription(request.description());
+        existingProduct.setPrice(request.price());
+        existingProduct.setStock(request.stock());
+        existingProduct.setActive(request.active());
 
-        existingProduct.setName(updatedProduct.getName());
-        existingProduct.setDescription(updatedProduct.getDescription());
-        existingProduct.setPrice(updatedProduct.getPrice());
-        existingProduct.setStock(updatedProduct.getStock());
-        existingProduct.setActive(updatedProduct.getActive());
+        Product updatedProduct = productRepository.save(existingProduct);
 
-        validateProduct(existingProduct);
-
-        return productRepository.save(existingProduct);
+        return toResponse(updatedProduct);
     }
 
     //DELETE PRODUCT
     public void deleteProduct(Long id) {
-        Product product = getProductById(id);
+        Product product = findProductById(id);
         productRepository.delete(product);
+    }
+
+    //FIND PRODUCT BY ID (FOR UPDATE & DELETE)
+    private Product findProductById(Long id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(id));
+    }
+
+    private ProductResponse toResponse(Product product) {
+        return new ProductResponse(
+                product.getId(),
+                product.getName(),
+                product.getDescription(),
+                product.getPrice(),
+                product.getStock(),
+                product.getActive()
+        );
     }
 }
