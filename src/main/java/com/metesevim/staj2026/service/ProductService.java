@@ -17,10 +17,30 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
+    //CREATE PRODUCT
     public Product createProduct(Product product) {
+        validateProduct(product);
 
+        return productRepository.save(product);
+    }
+
+    //GET ALL PRODUCTS
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
+    }
+
+    //GET A PRODUCT BY ID
+    public Product getProductById(Long id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(id));
+    }
+
+    //VALIDATION
+    private void validateProduct(Product product) {
         if (product.getName() == null || product.getName().isBlank()) {
-            throw new IllegalArgumentException("Product name cannot be empty");
+            throw new IllegalArgumentException(
+                    "Product name cannot be empty"
+            );
         }
 
         if (product.getPrice() == null ||
@@ -35,16 +55,21 @@ public class ProductService {
                     "Product stock cannot be negative"
             );
         }
-
-        return productRepository.save(product);
     }
 
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
-    }
+    //UPDATE PRODUCT
+    public Product updateProduct(Long id, Product updatedProduct) {
 
-    public Product getProductById(Long id) {
-        return productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(id));
+        Product existingProduct = getProductById(id);
+
+        existingProduct.setName(updatedProduct.getName());
+        existingProduct.setDescription(updatedProduct.getDescription());
+        existingProduct.setPrice(updatedProduct.getPrice());
+        existingProduct.setStock(updatedProduct.getStock());
+        existingProduct.setActive(updatedProduct.getActive());
+
+        validateProduct(existingProduct);
+
+        return productRepository.save(existingProduct);
     }
 }
