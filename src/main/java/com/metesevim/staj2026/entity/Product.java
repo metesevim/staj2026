@@ -1,0 +1,29 @@
+package com.metesevim.staj2026.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import java.math.BigDecimal;
+
+@Entity
+@Table(name = "products")
+@Setter
+@Getter
+@NoArgsConstructor
+public class Product {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+
+    private String description;
+
+    private BigDecimal price;
+
+    private Integer stock;
+
+    private Boolean active;
+}
