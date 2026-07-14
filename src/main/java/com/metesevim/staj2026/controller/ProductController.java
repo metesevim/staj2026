@@ -2,6 +2,7 @@ package com.metesevim.staj2026.controller;
 
 import com.metesevim.staj2026.entity.Product;
 import com.metesevim.staj2026.service.ProductService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,5 +38,12 @@ public class ProductController {
             @RequestBody Product product
     ) {
         return productService.updateProduct(id, product);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+        productService.deleteProduct(id);
+
+        return ResponseEntity.noContent().build();
     }
 }
