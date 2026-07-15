@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -53,6 +54,37 @@ public class ProductService {
         return toResponse(product);
     }
 
+    //GET PRODUCT BY NAME
+    public ProductResponse getProductByName(String name) {
+        Product product = productRepository.findByNameIgnoreCase(name)
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Product not found with name: " + name
+                        )
+                );
+
+        return toResponse(product);
+    }
+
+    //GET ACTIVE PRODUCTS
+    public List<ProductResponse> getActiveProducts() {
+        return productRepository.findAllActiveProducts()
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    //GET PRODUCTS BY MINIMUM PRICE
+    public List<ProductResponse> getProductsByMinimumPrice(
+            BigDecimal minimumPrice
+    ) {
+        return productRepository
+                .findProductsByMinimumPrice(minimumPrice)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
     //UPDATE PRODUCT
     public ProductResponse updateProduct(
             @PathVariable Long id,
@@ -93,4 +125,6 @@ public class ProductService {
                 product.getActive()
         );
     }
+
+
 }

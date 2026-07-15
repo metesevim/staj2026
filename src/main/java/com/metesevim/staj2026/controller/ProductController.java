@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -34,6 +35,25 @@ public class ProductController {
     @GetMapping("/{id}")
     public ProductResponse getProductById(@PathVariable Long id) {
         return productService.getProductById(id);
+    }
+
+    @GetMapping("/search")
+    public ProductResponse getProductByName(
+            @RequestParam String name
+    ) {
+        return productService.getProductByName(name);
+    }
+
+    @GetMapping("/active")
+    public List<ProductResponse> getActiveProducts() {
+        return productService.getActiveProducts();
+    }
+
+    @GetMapping("/minimum-price")
+    public List<ProductResponse> getProductsByMinimumPrice(
+            @RequestParam BigDecimal value
+    ) {
+        return productService.getProductsByMinimumPrice(value);
     }
 
     @PutMapping("/{id}")
