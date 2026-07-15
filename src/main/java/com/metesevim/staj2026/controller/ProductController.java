@@ -6,7 +6,7 @@ import com.metesevim.staj2026.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.security.access.prepost.PreAuthorize;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -20,6 +20,7 @@ public class ProductController {
         this.productService = productService;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ProductResponse createProduct(
             @Valid @RequestBody ProductRequest request
@@ -56,6 +57,7 @@ public class ProductController {
         return productService.getProductsByMinimumPrice(value);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ProductResponse updateProduct(
             @PathVariable Long id,
@@ -64,6 +66,7 @@ public class ProductController {
         return productService.updateProduct(id, request);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
