@@ -11,9 +11,12 @@ This is a backend service built with Spring Boot that provides RESTful endpoints
 - **Product Management**: Create, read, update, and delete products
 - **Security**: Spring Security configuration for API protection
 - **Error Handling**: Global exception handler for consistent error responses
-- **Database**: Repository pattern for data persistence
+- **Database**: PostgreSQL with Spring Data JPA and repository pattern
+- **API Documentation**: SwaggerUI/OpenAPI integration for interactive API documentation
+- **Validation**: Input validation using Spring Validation framework
 - **Docker Support**: Docker Compose configuration for containerized deployment
-- **Testing**: Unit test framework in place
+- **Testing**: Unit and integration test framework with Spring Security test support
+- **Code Generation**: Lombok support for reducing boilerplate code
 
 ## Project Structure
 
@@ -46,8 +49,9 @@ src/
 
 ## Prerequisites
 
-- Java 11 or higher
+- Java 21 or higher
 - Maven 3.6+
+- PostgreSQL 12+ (database)
 - Docker & Docker Compose (for containerized deployment)
 
 ## Getting Started
@@ -84,16 +88,35 @@ docker-compose up
 ### Testing
 - `GET /test` - Test endpoint
 
+### API Documentation
+- `GET /swagger-ui.html` - Interactive API documentation (SwaggerUI)
+- `GET /v3/api-docs` - OpenAPI specification in JSON format
+
 ## Configuration
 
 The application can be configured via `application.properties`:
 
 ```properties
 # Database configuration
-spring.datasource.url=...
-spring.datasource.username=...
-spring.datasource.password=...
+spring.datasource.url=jdbc:postgresql://localhost:5432/staj2026
+spring.datasource.username=postgres
+spring.datasource.password=postgres
+
+# JPA/Hibernate
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
 ```
+
+## Technologies & Dependencies
+
+- **Spring Boot 4.0.7** - Application framework
+- **Spring Data JPA** - ORM and database abstraction
+- **Spring Security** - Authentication and authorization
+- **PostgreSQL** - Database management system
+- **SpringDoc OpenAPI 2.8.9** - API documentation and Swagger UI
+- **Lombok** - Code generation for boilerplate reduction
+- **Spring Validation** - Input validation framework
 
 ## Exception Handling
 
