@@ -46,5 +46,29 @@ public class GlobalExceptionHandler {
                 .body(errors);
     }
 
+    @ExceptionHandler(UsernameAlreadyExistsException.class)
+    public ResponseEntity<Map<String, String>> handleUsernameAlreadyExists(
+            UsernameAlreadyExistsException exception
+    ) {
+        Map<String, String> error = new HashMap<>();
+        error.put("message", exception.getMessage());
 
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(error);
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidCredentials(
+            InvalidCredentialsException exception
+    ) {
+        Map<String, String> error = new HashMap<>();
+        error.put("message", exception.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(error);
+    }
 }
+
+
