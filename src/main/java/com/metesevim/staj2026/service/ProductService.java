@@ -4,6 +4,7 @@ import com.metesevim.staj2026.dto.ProductRequest;
 import com.metesevim.staj2026.dto.ProductResponse;
 import com.metesevim.staj2026.entity.Product;
 import com.metesevim.staj2026.exception.ProductNotFoundException;
+import com.metesevim.staj2026.exception.ProductVersionConflictException;
 import com.metesevim.staj2026.repository.ProductRepository;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
@@ -85,12 +86,24 @@ public class ProductService {
                 .toList();
     }
 
-    //UPDATE PRODUCT
+    // UPDATE PRODUCT
     public ProductResponse updateProduct(
-            @PathVariable Long id,
-            @Valid @RequestBody ProductRequest request
+            Long id,
+            ProductRequest request
     ) {
         Product existingProduct = findProductById(id);
+
+        if (request.version() == null) {
+            throw new IllegalArgumentException(
+                    "Product version is required for update"
+            );
+        }
+
+        if (!existingProduct.getVersion().equals(request.version())) {
+            throw new ProductVersionConflictException(
+                    "Product has already been updated by another request"
+            );
+        }
 
         existingProduct.setName(request.name());
         existingProduct.setDescription(request.description());
@@ -122,7 +135,8 @@ public class ProductService {
                 product.getDescription(),
                 product.getPrice(),
                 product.getStock(),
-                product.getActive()
+                product.getActive(),
+                product.getVersion()
         );
     }
 

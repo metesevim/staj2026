@@ -69,6 +69,21 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(error);
     }
+
+    @ExceptionHandler(ProductVersionConflictException.class)
+    public ResponseEntity<Map<String, String>> handleProductVersionConflict(
+            ProductVersionConflictException exception
+    ) {
+
+        Map<String, String> response = Map.of(
+                "error", "Product version conflict",
+                "message", exception.getMessage()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(response);
+    }
 }
 
 

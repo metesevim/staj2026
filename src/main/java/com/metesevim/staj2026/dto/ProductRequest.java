@@ -46,6 +46,12 @@ public record ProductRequest(
                 description = "Whether the product is active",
                 example = "true"
         )
-        Boolean active
+        Boolean active,
+
+        @Schema(
+                description = "Product version",
+                example = "1"
+        )
+        Long version
 ) {
 }

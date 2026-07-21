@@ -119,11 +119,11 @@ public class ProductController {
     })
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
-    public ProductResponse updateProduct(
+    public ResponseEntity<ProductResponse> updateProduct(
             @PathVariable Long id,
             @Valid @RequestBody ProductRequest request
     ) {
-        return productService.updateProduct(id, request);
+        return ResponseEntity.ok(productService.updateProduct(id, request));
     }
 
 

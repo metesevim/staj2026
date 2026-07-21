@@ -26,4 +26,7 @@ public class Product {
     private Integer stock;
 
     private Boolean active;
+
+    @Version
+    private Long version;
 }

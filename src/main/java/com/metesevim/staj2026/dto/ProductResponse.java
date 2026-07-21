@@ -23,6 +23,11 @@ public record ProductResponse(
         Integer stock,
 
         @Schema(description = "Product status", example = "true")
-        Boolean active
+        Boolean active,
+
+        @Schema(description = "Product version", example = "1")
+        Long version
+
+
 ) {
 }

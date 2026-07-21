@@ -37,7 +37,8 @@ class ProductServiceTest {
                 "Wireless gaming mouse",
                 new BigDecimal("1499.90"),
                 10,
-                true
+                true,
+                1L
         );
 
         Product savedProduct = new Product();
@@ -69,7 +70,8 @@ class ProductServiceTest {
                 "RGB mechanical keyboard",
                 new BigDecimal("2499.90"),
                 12,
-                null
+                null,
+                1L
         );
 
         Product savedProduct = new Product();
@@ -177,7 +179,8 @@ class ProductServiceTest {
                 "Updated description",
                 new BigDecimal("1799.90"),
                 20,
-                false
+                false,
+                1L
         );
 
         when(productRepository.findById(productId))
