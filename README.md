@@ -81,9 +81,19 @@ This is a backend service built with Spring Boot that provides RESTful endpoints
    ```
 
 2. **Environment Configuration**
-   - Copy or create `.env` file with required environment variables:
+   - The `.env` file is not committed to the repository for security reasons (see `.gitignore`)
+   - Copy `.env.example` to create your local `.env` file:
+   ```bash
+   cp .env.example .env
+   ```
+   - Update the `.env` file with your actual values:
    ```env
    JWT_SECRET=your-secret-key-here
+   ```
+   - **Note:** Use a strong, random Base64-encoded string for production. Example generation:
+   ```bash
+   # Generate a random JWT secret
+   openssl rand -base64 32
    ```
 
 ### Build the Project
@@ -161,12 +171,34 @@ kubectl port-forward svc/staj2026-service 8080:8080
 
 The application reads configuration from a `.env` file:
 
+**Setup Instructions:**
+1. Copy the template file: `cp .env.example .env`
+2. Edit `.env` with your actual secrets and configuration
+3. The `.env` file is excluded from Git and should never be committed
+
+**Example `.env` file:**
 ```env
 JWT_SECRET=your-jwt-secret-key
 ```
 
+**Important Security Note:**
+- The `.env` file is **NOT tracked by Git** (listed in `.gitignore`) to protect sensitive credentials
+- Each developer must create their own local `.env` file
+- Never commit `.env` files to version control
+- The `.env.example` file is tracked in Git and serves as a template for developers
+
 **Required Variables:**
 - `JWT_SECRET` - Secret key for JWT token signing (must be a valid Base64-encoded string)
+
+**Generating a Secure JWT Secret:**
+```bash
+openssl rand -base64 32
+```
+
+**Production Environment:**
+- Use strong, randomly generated secrets
+- Store secrets in secure secret management systems (e.g., AWS Secrets Manager, HashiCorp Vault)
+- Never hardcode secrets in code or configuration files
 
 ### Application Properties
 
