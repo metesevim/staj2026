@@ -26,7 +26,10 @@ public record ProductResponse(
         Boolean active,
 
         @Schema(description = "Product version", example = "1")
-        Long version
+        Long version,
+
+        @Schema(description = "Seller username", example = "mete")
+        String sellerUsername
 
 
 ) {

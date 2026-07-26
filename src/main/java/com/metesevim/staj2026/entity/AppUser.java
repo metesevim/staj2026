@@ -25,4 +25,8 @@ public class AppUser {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+    @ManyToOne
+    @JoinColumn(name = "seller_id")
+    private AppUser seller;
 }

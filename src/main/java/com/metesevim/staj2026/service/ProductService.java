@@ -2,11 +2,15 @@ package com.metesevim.staj2026.service;
 
 import com.metesevim.staj2026.dto.ProductRequest;
 import com.metesevim.staj2026.dto.ProductResponse;
+import com.metesevim.staj2026.entity.AppUser;
 import com.metesevim.staj2026.entity.Product;
 import com.metesevim.staj2026.exception.ProductNotFoundException;
 import com.metesevim.staj2026.exception.ProductVersionConflictException;
 import com.metesevim.staj2026.repository.ProductRepository;
+import com.metesevim.staj2026.repository.UserRepository;
 import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,13 +22,26 @@ import java.util.List;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final UserRepository userRepository;
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, UserRepository userRepository) {
         this.productRepository = productRepository;
+        this.userRepository = userRepository;
     }
 
     //CREATE PRODUCT
     public ProductResponse createProduct(ProductRequest request) {
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        String username = authentication.getName();
+
+        AppUser seller = userRepository.findByUsername(username)
+                .orElseThrow(() ->
+                        new RuntimeException("Authenticated user not found")
+                );
+
         Product product = new Product();
 
         product.setName(request.name());
@@ -34,6 +51,9 @@ public class ProductService {
         product.setActive(
                 request.active() != null ? request.active() : true
         );
+        product.setSeller(seller);
+
+
 
         Product savedProduct = productRepository.save(product);
 
@@ -136,7 +156,10 @@ public class ProductService {
                 product.getPrice(),
                 product.getStock(),
                 product.getActive(),
-                product.getVersion()
+                product.getVersion(),
+                product.getSeller() == null
+                        ? null
+                        : product.getSeller().getUsername()
         );
     }
 

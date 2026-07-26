@@ -6,11 +6,23 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
-@Entity
-@Table(name = "products")
 @Setter
 @Getter
 @NoArgsConstructor
+@Entity
+@Table(
+        name = "products",
+        indexes = {
+                @Index(
+                        name = "idx_products_name",
+                        columnList = "name"
+                ),
+                @Index(
+                        name = "idx_products_seller_active",
+                        columnList = "seller_id, active"
+                )
+        }
+)
 public class Product {
 
     @Id
@@ -29,4 +41,8 @@ public class Product {
 
     @Version
     private Long version;
+
+    @ManyToOne
+    @JoinColumn(name = "seller_id")
+    private AppUser seller;
 }
