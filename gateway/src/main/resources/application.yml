@@ -1,0 +1,22 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: staj2026-gateway
+
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: staj2026-api
+              uri: http://localhost:8080
+              predicates:
+                - Path=/api/**
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
