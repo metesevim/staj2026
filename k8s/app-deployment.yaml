@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: staj2026-app
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: staj2026-app
+
+  template:
+    metadata:
+      labels:
+        app: staj2026-app
+
+    spec:
+      containers:
+        - name: staj2026-app
+          image: staj2026-app:latest
+          imagePullPolicy: Never
+
+          ports:
+            - containerPort: 8080
+
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://host.minikube.internal:5432/staj2026
+
+            - name: SPRING_DATASOURCE_USERNAME
+              value: postgres
+
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: postgres
+
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: staj2026-secret
+                  key: jwt-secret
