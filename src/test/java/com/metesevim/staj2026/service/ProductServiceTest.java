@@ -5,12 +5,19 @@ import com.metesevim.staj2026.dto.ProductResponse;
 import com.metesevim.staj2026.entity.Product;
 import com.metesevim.staj2026.exception.ProductNotFoundException;
 import com.metesevim.staj2026.repository.ProductRepository;
+import com.metesevim.staj2026.repository.UserRepository;
+import com.metesevim.staj2026.entity.AppUser;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -18,8 +25,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
@@ -27,8 +33,33 @@ class ProductServiceTest {
     @Mock
     private ProductRepository productRepository;
 
+    @Mock
+    private Authentication authentication;
+
+    @Mock
+    private SecurityContext securityContext;
+
+    @Mock
+    private UserRepository userRepository;
+
     @InjectMocks
     private ProductService productService;
+
+    @BeforeEach
+    void setUp() {
+        lenient().when(securityContext.getAuthentication())
+                .thenReturn(authentication);
+
+        lenient().when(authentication.getName())
+                .thenReturn("admin");
+
+        SecurityContextHolder.setContext(securityContext);
+    }
+
+    @AfterEach
+    void tearDown() {
+        SecurityContextHolder.clearContext();
+    }
 
     @Test
     void shouldCreateProductSuccessfully() {
@@ -48,6 +79,13 @@ class ProductServiceTest {
         savedProduct.setPrice(new BigDecimal("1499.90"));
         savedProduct.setStock(10);
         savedProduct.setActive(true);
+
+        AppUser testUser = new AppUser();
+        testUser.setId(1L);
+        testUser.setUsername("admin");
+
+        when(userRepository.findByUsername("admin"))
+                .thenReturn(Optional.of(testUser));
 
         when(productRepository.save(any(Product.class)))
                 .thenReturn(savedProduct);
@@ -81,6 +119,13 @@ class ProductServiceTest {
         savedProduct.setPrice(new BigDecimal("2499.90"));
         savedProduct.setStock(12);
         savedProduct.setActive(true);
+
+        AppUser testUser = new AppUser();
+        testUser.setId(1L);
+        testUser.setUsername("admin");
+
+        when(userRepository.findByUsername("admin"))
+                .thenReturn(Optional.of(testUser));
 
         when(productRepository.save(any(Product.class)))
                 .thenReturn(savedProduct);
@@ -173,6 +218,7 @@ class ProductServiceTest {
         existingProduct.setPrice(new BigDecimal("1499.90"));
         existingProduct.setStock(10);
         existingProduct.setActive(true);
+        existingProduct.setVersion(1L);
 
         ProductRequest request = new ProductRequest(
                 "Gaming Mouse Pro",
