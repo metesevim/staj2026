@@ -57,6 +57,8 @@ jobs:
 
       - name: Create kind cluster
         uses: helm/kind-action@v1
+        with:
+          cluster_name: kind
 
       - name: Build backend image
         run: docker build -t staj2026-app:ci .
@@ -66,8 +68,8 @@ jobs:
 
       - name: Load images into kind
         run: |
-          kind load docker-image staj2026-app:ci
-          kind load docker-image staj2026-gateway:ci
+          kind load docker-image staj2026-app:ci --name kind
+          kind load docker-image staj2026-gateway:ci --name kind
 
       - name: Deploy application
         run: |
