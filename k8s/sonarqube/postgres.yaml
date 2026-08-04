@@ -1,0 +1,101 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: sonarqube-postgres-secret
+  namespace: sonarqube
+type: Opaque
+stringData:
+  postgres-user: sonar
+  postgres-password: sonar_password
+  postgres-database: sonarqube
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sonarqube-postgres-pvc
+  namespace: sonarqube
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sonarqube-postgres
+  namespace: sonarqube
+spec:
+  selector:
+    app: sonarqube-postgres
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: 5432
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sonarqube-postgres
+  namespace: sonarqube
+spec:
+  serviceName: sonarqube-postgres
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: sonarqube-postgres
+
+  template:
+    metadata:
+      labels:
+        app: sonarqube-postgres
+
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:17
+
+          ports:
+            - containerPort: 5432
+
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: sonarqube-postgres-secret
+                  key: postgres-user
+
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: sonarqube-postgres-secret
+                  key: postgres-password
+
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: sonarqube-postgres-secret
+                  key: postgres-database
+
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - pg_isready -U sonar -d sonarqube
+            initialDelaySeconds: 10
+            periodSeconds: 5
+
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: sonarqube-postgres-pvc
