@@ -29,7 +29,8 @@ public class SecurityConfig {
             HttpSecurity http
     ) throws Exception {
 
-
+        // Safe to disable CSRF because this application is a stateless REST API
+        // authenticated with JWT Bearer tokens instead of cookie-based sessions.
         http
                 .cors(cors -> {})
                 .csrf(csrf -> csrf.disable())
