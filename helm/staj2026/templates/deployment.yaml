@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "staj2026.fullname" . }}
+  labels:
+    {{- include "staj2026.labels" . | nindent 4 }}
+
+spec:
+  replicas: {{ .Values.replicaCount }}
+
+  selector:
+    matchLabels:
+      {{- include "staj2026.selectorLabels" . | nindent 6 }}
+
+  template:
+    metadata:
+      labels:
+        {{- include "staj2026.selectorLabels" . | nindent 8 }}
+
+    spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: postgres:17
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready \
+                -h {{ .Values.database.host }} \
+                -p {{ .Values.database.port }} \
+                -U {{ .Values.database.username }} \
+                -d {{ .Values.database.name }};
+              do
+                echo "PostgreSQL bekleniyor..."
+                sleep 3
+              done
+
+      containers:
+        - name: {{ .Chart.Name }}
+
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.targetPort }}
+              protocol: TCP
+
+          envFrom:
+            - configMapRef:
+                name: {{ include "staj2026.fullname" . }}-config
+
+            - secretRef:
+                name: {{ include "staj2026.fullname" . }}-secret

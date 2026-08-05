@@ -4,6 +4,10 @@ server:
 spring:
   application:
     name: staj2026-gateway
+  data:
+    redis:
+      host: ${VALKEY_HOST:localhost}
+      port: ${VALKEY_PORT:6379}
 
   cloud:
     gateway:
@@ -20,3 +24,4 @@ management:
     web:
       exposure:
         include: health,info
+

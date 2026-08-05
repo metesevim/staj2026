@@ -1,0 +1,23 @@
+replicaCount: 2
+
+image:
+  repository: staj2026-app
+  tag: latest
+  pullPolicy: Never
+
+service:
+  type: NodePort
+  port: 8080
+  targetPort: 8080
+  nodePort: 32080
+
+database:
+  host: postgres
+  port: 5432
+  name: staj2026
+  username: postgres
+  password: postgres
+  storage: 2Gi
+
+jwt:
+  secret: helm-jwt-secret-key-must-be-at-least-32-characters

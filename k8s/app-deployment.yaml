@@ -19,15 +19,21 @@ spec:
     spec:
       containers:
         - name: staj2026-app
-          image: staj2026-app:latest
+          image: staj2026-app:valkey-v1
           imagePullPolicy: Never
 
           ports:
             - containerPort: 8080
 
           env:
+            - name: SPRING_DATA_REDIS_HOST
+              value: valkey
+
+            - name: SPRING_DATA_REDIS_PORT
+              value: "6379"
+
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:postgresql://host.minikube.internal:5432/staj2026
+              value: jdbc:postgresql://postgres:5432/staj2026
 
             - name: SPRING_DATASOURCE_USERNAME
               value: postgres

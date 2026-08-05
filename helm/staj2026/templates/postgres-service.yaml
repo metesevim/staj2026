@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.database.host }}
+  labels:
+    app: {{ include "staj2026.fullname" . }}-postgres
+spec:
+  selector:
+    app: {{ include "staj2026.fullname" . }}-postgres
+  ports:
+      - name: postgres
+        protocol: TCP
+        port: {{ .Values.database.port }}
+        targetPort: {{ .Values.database.port }}

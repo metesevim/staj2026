@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "staj2026.fullname" . }}-postgres
+  labels:
+    app: {{ include "staj2026.fullname" . }}-postgres
+spec:
+  serviceName: {{ .Values.database.host }}
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: {{ include "staj2026.fullname" . }}-postgres
+
+  template:
+    metadata:
+      labels:
+        app: {{ include "staj2026.fullname" . }}-postgres
+
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:17
+
+          ports:
+            - name: postgres
+              containerPort: {{ .Values.database.port }}
+
+          env:
+            - name: POSTGRES_DB
+              value: {{ .Values.database.name | quote }}
+
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "staj2026.fullname" . }}-secret
+                  key: SPRING_DATASOURCE_USERNAME
+
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "staj2026.fullname" . }}-secret
+                  key: SPRING_DATASOURCE_PASSWORD
+
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - >
+                  pg_isready
+                  -U {{ .Values.database.username }}
+                  -d {{ .Values.database.name }}
+            initialDelaySeconds: 10
+            periodSeconds: 5
+
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: {{ include "staj2026.fullname" . }}-postgres-pvc
