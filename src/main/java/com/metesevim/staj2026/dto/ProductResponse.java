@@ -1,7 +1,7 @@
 package com.metesevim.staj2026.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Schema(description = "Product response object")
@@ -32,5 +32,5 @@ public record ProductResponse(
         String sellerUsername
 
 
-) {
+) implements Serializable {
 }

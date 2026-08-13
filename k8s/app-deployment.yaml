@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: staj2026-app
-          image: staj2026-app:valkey-v1
+          image: staj2026-app:cache-v2
           imagePullPolicy: Never
 
           ports:

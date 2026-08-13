@@ -14,6 +14,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.CacheEvict;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -69,6 +72,7 @@ public class ProductService {
     }
 
     //GET PRODUCT BY ID
+    @Cacheable(value = "products", key = "#id")
     public ProductResponse getProductById(Long id) {
         Product product = findProductById(id);
 
@@ -107,6 +111,7 @@ public class ProductService {
     }
 
     // UPDATE PRODUCT
+    @CachePut(value = "products", key = "#id")
     public ProductResponse updateProduct(
             Long id,
             ProductRequest request
@@ -137,6 +142,7 @@ public class ProductService {
     }
 
     //DELETE PRODUCT
+    @CacheEvict(value = "products", key = "#id")
     public void deleteProduct(Long id) {
         Product product = findProductById(id);
         productRepository.delete(product);
