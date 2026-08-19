@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.CacheEvict;
+import com.metesevim.staj2026.document.ProductDocument;
+import com.metesevim.staj2026.repository.ProductSearchRepository;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -26,10 +28,34 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final ProductSearchRepository productSearchRepository;
 
-    public ProductService(ProductRepository productRepository, UserRepository userRepository) {
+    public ProductService(
+            ProductRepository productRepository,
+            UserRepository userRepository,
+            ProductSearchRepository productSearchRepository
+    ) {
         this.productRepository = productRepository;
         this.userRepository = userRepository;
+        this.productSearchRepository = productSearchRepository;
+    }
+
+    // SEARCH PRODUCTS WITH ELASTICSEARCH
+    public List<ProductResponse> searchProducts(String query) {
+        return productSearchRepository
+                .findByNameContainingIgnoreCase(query)
+                .stream()
+                .map(document -> new ProductResponse(
+                        document.getId(),
+                        document.getName(),
+                        document.getDescription(),
+                        document.getPrice(),
+                        document.getStock(),
+                        document.getActive(),
+                        null,
+                        null
+                ))
+                .toList();
     }
 
     //CREATE PRODUCT
@@ -60,7 +86,13 @@ public class ProductService {
 
         Product savedProduct = productRepository.save(product);
 
+        productSearchRepository.save(
+                toDocument(savedProduct)
+        );
+
         return toResponse(savedProduct);
+
+
     }
 
     //GET ALL PRODUCTS
@@ -138,6 +170,10 @@ public class ProductService {
 
         Product updatedProduct = productRepository.save(existingProduct);
 
+        productSearchRepository.save(
+                toDocument(updatedProduct)
+        );
+
         return toResponse(updatedProduct);
     }
 
@@ -145,7 +181,9 @@ public class ProductService {
     @CacheEvict(value = "products", key = "#id")
     public void deleteProduct(Long id) {
         Product product = findProductById(id);
+
         productRepository.delete(product);
+        productSearchRepository.deleteById(id);
     }
 
     //FIND PRODUCT BY ID (FOR UPDATE & DELETE)
@@ -167,6 +205,26 @@ public class ProductService {
                         ? null
                         : product.getSeller().getUsername()
         );
+    }
+
+    private ProductDocument toDocument(Product product) {
+        return new ProductDocument(
+                product.getId(),
+                product.getName(),
+                product.getDescription(),
+                product.getPrice(),
+                product.getStock(),
+                product.getActive()
+        );
+    }
+
+    public void syncProductsToElasticsearch() {
+        List<ProductDocument> documents = productRepository.findAll()
+                .stream()
+                .map(this::toDocument)
+                .toList();
+
+        productSearchRepository.saveAll(documents);
     }
 
 

@@ -5,6 +5,11 @@ spring:
     username: sa
     password:
 
+  data:
+    elasticsearch:
+      repositories:
+        enabled: false
+
   jpa:
     hibernate:
       ddl-auto: create-drop

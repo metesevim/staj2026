@@ -19,13 +19,16 @@ spec:
     spec:
       containers:
         - name: staj2026-app
-          image: staj2026-app:cache-v2
+          image: staj2026-app:elastic-v1
           imagePullPolicy: Never
 
           ports:
             - containerPort: 8080
 
           env:
+            - name: ELASTICSEARCH_URL
+              value: http://elasticsearch:9200
+
             - name: SPRING_DATA_REDIS_HOST
               value: valkey
 

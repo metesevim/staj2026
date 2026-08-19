@@ -78,7 +78,7 @@ public class ProductController {
             summary = "Find product by name",
             description = "Returns a product with the given name."
     )
-    @GetMapping("/search")
+    @GetMapping("/by-name")
     public ProductResponse getProductByName(
             @RequestParam String name
     ) {
@@ -143,4 +143,17 @@ public class ProductController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/search")
+    public List<ProductResponse> searchProducts(
+            @RequestParam String q
+    ) {
+        return productService.searchProducts(q);
+    }
+
+    @PostMapping("/search/sync")
+    public void syncProductsToElasticsearch() {
+        productService.syncProductsToElasticsearch();
+    }
+
 }
