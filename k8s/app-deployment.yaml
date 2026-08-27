@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: staj2026-app
-          image: staj2026-app:elastic-v1
+          image: staj2026-app:couchbase-crud
           imagePullPolicy: Never
 
           ports:
@@ -28,6 +28,24 @@ spec:
           env:
             - name: ELASTICSEARCH_URL
               value: http://elasticsearch:9200
+
+            - name: COUCHBASE_CONNECTION_STRING
+              value: couchbase://couchbase-headless
+
+            - name: COUCHBASE_BUCKET
+              value: staj2026
+
+            - name: COUCHBASE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: couchbase-admin
+                  key: username
+
+            - name: COUCHBASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: couchbase-admin
+                  key: password
 
             - name: SPRING_DATA_REDIS_HOST
               value: valkey

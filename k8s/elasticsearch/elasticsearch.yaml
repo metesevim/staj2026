@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: elasticsearch
-          image: docker.elastic.co/elasticsearch/elasticsearch:8.19.0
+          image: docker.elastic.co/elasticsearch/elasticsearch:9.2.8
 
           ports:
             - containerPort: 9200
@@ -31,14 +31,14 @@ spec:
               value: "false"
 
             - name: ES_JAVA_OPTS
-              value: "-Xms512m -Xmx512m"
+              value: "-Xms384m -Xmx384m"
 
           resources:
             requests:
-              memory: "1Gi"
+              memory: "512Mi"
               cpu: "250m"
             limits:
-              memory: "2Gi"
+              memory: "1Gi"
               cpu: "1000m"
 
 ---

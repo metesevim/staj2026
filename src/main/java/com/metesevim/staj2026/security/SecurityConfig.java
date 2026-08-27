@@ -66,7 +66,8 @@ public class SecurityConfig {
 
                         .requestMatchers(
                                 HttpMethod.GET,
-                                "/api/products/**"
+                                "/api/products/**",
+                                "/api/couchbase/products/**"
                         ).permitAll()
 
                         .anyRequest().authenticated()

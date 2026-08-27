@@ -1,4 +1,9 @@
 spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.couchbase.autoconfigure.CouchbaseAutoConfiguration
+      - org.springframework.boot.data.couchbase.autoconfigure.DataCouchbaseAutoConfiguration
+
   datasource:
     url: jdbc:h2:mem:staj2026
     driver-class-name: org.h2.Driver
@@ -6,9 +11,16 @@ spring:
     password:
 
   data:
+    couchbase:
+      repositories:
+        type: none
     elasticsearch:
       repositories:
         enabled: false
+
+  kafka:
+    listener:
+      auto-startup: false
 
   jpa:
     hibernate:
