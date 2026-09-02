@@ -1,0 +1,66 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-create-products
+      author: metesevim
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: products
+      changes:
+        - createTable:
+            tableName: products
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: products_pkey
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+              - column:
+                  name: price
+                  type: DECIMAL(38,2)
+              - column:
+                  name: stock
+                  type: INTEGER
+              - column:
+                  name: active
+                  type: BOOLEAN
+              - column:
+                  name: version
+                  type: BIGINT
+              - column:
+                  name: seller_id
+                  type: BIGINT
+        - addForeignKeyConstraint:
+            baseTableName: products
+            baseColumnNames: seller_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_products_seller
+        - createIndex:
+            tableName: products
+            indexName: idx_products_name
+            columns:
+              - column:
+                  name: name
+        - createIndex:
+            tableName: products
+            indexName: idx_products_seller_active
+            columns:
+              - column:
+                  name: seller_id
+              - column:
+                  name: active
+      rollback:
+        - dropTable:
+            tableName: products
+            cascadeConstraints: true

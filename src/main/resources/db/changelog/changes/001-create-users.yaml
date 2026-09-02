@@ -1,0 +1,53 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-users
+      author: metesevim
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: users
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: users_pkey
+                    nullable: false
+              - column:
+                  name: username
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: password
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: seller_id
+                  type: BIGINT
+        - addUniqueConstraint:
+            tableName: users
+            columnNames: username
+            constraintName: uk_users_username
+        - addForeignKeyConstraint:
+            baseTableName: users
+            baseColumnNames: seller_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_users_seller
+      rollback:
+        - dropTable:
+            tableName: users
+            cascadeConstraints: true

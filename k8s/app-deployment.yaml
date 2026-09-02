@@ -19,13 +19,24 @@ spec:
     spec:
       containers:
         - name: staj2026-app
-          image: staj2026-app:couchbase-crud
+          image: staj2026-app:liquibase
           imagePullPolicy: Never
+
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: "1"
+              memory: 640Mi
 
           ports:
             - containerPort: 8080
 
           env:
+            - name: JAVA_TOOL_OPTIONS
+              value: "-Xms96m -Xmx320m -XX:MaxMetaspaceSize=192m -XX:+UseSerialGC"
+
             - name: ELASTICSEARCH_URL
               value: http://elasticsearch:9200
 
