@@ -1,0 +1,184 @@
+:root {
+  --paper: #f3f0e8;
+  --ink: #14262d;
+  --blue: #274c77;
+  --teal: #1d8179;
+  --orange: #e7653c;
+  --line: #c7c1b5;
+  --white: #fffdf8;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background:
+    linear-gradient(90deg, transparent 39px, rgba(231, 101, 60, .22) 40px, transparent 41px),
+    repeating-linear-gradient(0deg, var(--paper), var(--paper) 31px, rgba(39, 76, 119, .09) 32px);
+  color: var(--ink);
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
+  min-height: 100vh;
+}
+
+button, input { font: inherit; }
+
+button:focus-visible, input:focus-visible {
+  outline: 3px solid rgba(29, 129, 121, .35);
+  outline-offset: 2px;
+}
+
+main {
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 56px 0 80px;
+}
+
+.masthead {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  border-bottom: 4px solid var(--ink);
+  padding-bottom: 26px;
+}
+
+.eyebrow, .section-heading, .record-id, .stock span {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+.eyebrow {
+  color: var(--teal);
+  font-size: .76rem;
+  font-weight: 800;
+  margin: 0 0 12px;
+}
+
+h1 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(4rem, 9vw, 7.7rem);
+  font-weight: 400;
+  letter-spacing: -.065em;
+  line-height: .72;
+  margin: 0;
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: end;
+  gap: 0 12px;
+  text-align: right;
+}
+
+.summary > span { grid-column: 1 / -1; font-weight: 700; }
+.summary strong { color: var(--orange); font: 700 4.6rem/.8 Georgia, serif; }
+.summary small { max-width: 60px; line-height: 1.05; }
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(260px, .72fr) minmax(500px, 1.6fr);
+  gap: 34px;
+  padding-top: 34px;
+}
+
+.product-form, .ledger {
+  background: rgba(255, 253, 248, .88);
+  border: 1px solid var(--line);
+  box-shadow: 7px 7px 0 rgba(20, 38, 45, .11);
+  padding: 24px;
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--ink);
+  font-size: .68rem;
+  font-weight: 800;
+  padding-bottom: 10px;
+  margin-bottom: 24px;
+}
+
+.section-heading span:last-child { color: var(--teal); }
+
+label {
+  display: grid;
+  gap: 7px;
+  font-size: .84rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+input {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid var(--line);
+  border-radius: 0;
+  color: var(--ink);
+  padding: 10px 2px;
+}
+
+input:focus { border-color: var(--teal); }
+
+.product-form > button {
+  width: 100%;
+  border: 0;
+  background: var(--blue);
+  color: white;
+  cursor: pointer;
+  font-weight: 800;
+  margin-top: 8px;
+  padding: 14px 18px;
+  transition: transform .15s ease, background .15s ease;
+}
+
+.product-form > button:hover { background: var(--teal); transform: translateY(-2px); }
+.product-form > button:disabled { cursor: wait; opacity: .65; }
+.error { color: #a43120; font-size: .84rem; font-weight: 700; margin: 16px 0 0; }
+.empty { color: #68747a; margin: 54px auto; max-width: 360px; text-align: center; }
+ul { list-style: none; margin: 0; padding: 0; }
+
+li {
+  display: grid;
+  grid-template-columns: 54px 1fr 70px 45px;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 1px solid var(--line);
+  padding: 16px 0;
+}
+
+li:last-child { border-bottom: 0; }
+.record-id { color: var(--teal); font-size: .7rem; }
+.record-name { display: grid; gap: 3px; }
+.record-name strong { font-family: Georgia, serif; font-size: 1.14rem; }
+.record-name span { color: #68747a; font-size: .8rem; }
+.stock { display: flex; align-items: baseline; gap: 5px; }
+.stock strong { color: var(--orange); font: 700 1.8rem Georgia, serif; }
+.stock span { font-size: .58rem; }
+
+.delete-button {
+  border: 0;
+  border-bottom: 1px solid transparent;
+  background: transparent;
+  color: #8b3326;
+  cursor: pointer;
+  font-size: .75rem;
+  padding: 5px 0;
+}
+
+.delete-button:hover { border-color: currentColor; }
+
+@media (max-width: 860px) {
+  main { width: min(100% - 24px, 620px); padding-top: 34px; }
+  .masthead { align-items: start; }
+  h1 { font-size: clamp(3.6rem, 20vw, 6rem); }
+  .summary { margin-top: 10px; }
+  .summary strong { font-size: 3.2rem; }
+  .workspace { grid-template-columns: 1fr; }
+  li { grid-template-columns: 42px 1fr 62px 35px; gap: 9px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+}

@@ -24,12 +24,27 @@ jobs:
           java-version: "21"
           cache: maven
 
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: websocket-react-demo/package-lock.json
+
       - name: Build and test backend
         run: ./mvnw clean verify
 
       - name: Build and test gateway
         working-directory: gateway
         run: mvn clean verify
+
+      - name: Install WebSocket React dependencies
+        working-directory: websocket-react-demo
+        run: npm ci
+
+      - name: Build WebSocket React demo
+        working-directory: websocket-react-demo
+        run: npm run build
 
   docker-build:
     name: Build Docker Images
@@ -97,3 +112,9 @@ jobs:
             -- \
             curl --fail --retry 10 --retry-delay 5 \
             http://staj2026-gateway-service:8081/api/products
+
+      - name: Show application logs on failure
+        if: failure()
+        run: |
+          kubectl logs deployment/staj2026-app --all-containers=true || true
+          kubectl logs deployment/staj2026-gateway --all-containers=true || true

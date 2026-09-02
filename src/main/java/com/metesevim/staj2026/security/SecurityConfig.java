@@ -61,7 +61,8 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**",
                                 "/v3/api-docs",
-                                "/api/valkey/**"
+                                "/api/valkey/**",
+                                "/ws/**"
                         ).permitAll()
 
                         .requestMatchers(
@@ -107,7 +108,10 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(
-                List.of("http://localhost:3000")
+                List.of(
+                        "http://localhost:3000",
+                        "http://localhost:5173"
+                )
         );
 
         configuration.setAllowedMethods(
