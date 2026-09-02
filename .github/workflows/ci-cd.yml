@@ -91,7 +91,8 @@ jobs:
           kubectl apply -f k8s/ci/
           
           kubectl rollout status deployment/postgres --timeout=180s
-          kubectl rollout status deployment/staj2026-app --timeout=180s
+          kubectl rollout status deployment/elasticsearch --timeout=300s
+          kubectl rollout status deployment/staj2026-app --timeout=300s
           kubectl rollout status deployment/staj2026-gateway --timeout=180s
 
       - name: Show Kubernetes resources
@@ -118,3 +119,4 @@ jobs:
         run: |
           kubectl logs deployment/staj2026-app --all-containers=true || true
           kubectl logs deployment/staj2026-gateway --all-containers=true || true
+          kubectl logs deployment/elasticsearch --all-containers=true || true

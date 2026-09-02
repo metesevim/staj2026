@@ -41,6 +41,18 @@ spec:
                 sleep 3
               done
 
+        - name: wait-for-elasticsearch
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              until curl --fail --silent http://elasticsearch:9200/_cluster/health;
+              do
+                echo "Waiting for Elasticsearch..."
+                sleep 3
+              done
+
       containers:
         - name: staj2026-app
           image: staj2026-app:ci
@@ -70,6 +82,9 @@ spec:
                 secretKeyRef:
                   name: staj2026-secrets
                   key: postgres-password
+
+            - name: ELASTICSEARCH_URL
+              value: http://elasticsearch:9200
 
             - name: JWT_SECRET
               valueFrom:
